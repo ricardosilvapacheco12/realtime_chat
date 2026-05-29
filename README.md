@@ -14,3 +14,7 @@ Chat em tempo real em PHP com XAMPP.
 1. Abra o XAMPP
 2. Coloque o projeto em `htdocs`
 3. Acesse `http://localhost/realtime_chat`
+
+# Realtime Chat
+
+![Print do chat](assets/images/realtime_chat.png)
