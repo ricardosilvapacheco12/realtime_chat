@@ -8,18 +8,23 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$lastId = intval($_GET['last_id'] ?? 0);
+$contactId = intval($_GET['contact_id'] ?? 0);
 $userId = $_SESSION['user_id'];
+
+if ($contactId <= 0) {
+    header('Content-Type: application/json');
+    echo json_encode(['messages' => []]);
+    exit;
+}
 
 $stmt = $conn->prepare(
     'SELECT m.id, m.message, m.created_at, u.firstname, u.lastname, m.user_id
      FROM messages m
      JOIN users u ON u.id = m.user_id
-     WHERE m.id > ?
-     ORDER BY m.id ASC
-     LIMIT 200'
+     WHERE ((m.user_id = ? AND m.receiver_id = ?) OR (m.user_id = ? AND m.receiver_id = ?))
+     ORDER BY m.created_at ASC'
 );
-$stmt->bind_param('i', $lastId);
+$stmt->bind_param('iiii', $userId, $contactId, $contactId, $userId);
 $stmt->execute();
 $stmt->bind_result($id, $message, $createdAt, $firstname, $lastname, $messageUserId);
 
